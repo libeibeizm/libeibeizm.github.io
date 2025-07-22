@@ -1,0 +1,268 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Vue八股文自整合通俗易懂版下 | hexo</title><meta name="author" content="李贝贝"><meta name="copyright" content="李贝贝"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="四、路由2. 路由的hash和history模式的区别Vue-Router的hash和history模式，主要区别如下：  URL表现   hash模式：URL里带 # ，比如 xxx.com&#x2F;#&#x2F;page ， # 后面的部分就是hash值。 history模式：URL里没有 # ，和正常网址一样，比如 xxx.com&#x2F;page 。   原理与页面刷新   hash模">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Vue八股文自整合通俗易懂版下">
+<meta property="og:url" content="http://example.com/2025/07/22/Vue%E5%85%AB%E8%82%A1%E6%96%87%E8%87%AA%E6%95%B4%E5%90%88%E9%80%9A%E4%BF%97%E6%98%93%E6%87%82%E7%89%88%E4%B8%8B/index.html">
+<meta property="og:site_name" content="hexo">
+<meta property="og:description" content="四、路由2. 路由的hash和history模式的区别Vue-Router的hash和history模式，主要区别如下：  URL表现   hash模式：URL里带 # ，比如 xxx.com&#x2F;#&#x2F;page ， # 后面的部分就是hash值。 history模式：URL里没有 # ，和正常网址一样，比如 xxx.com&#x2F;page 。   原理与页面刷新   hash模">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/picture/touxiang.jpeg">
+<meta property="article:published_time" content="2025-07-22T12:00:41.774Z">
+<meta property="article:modified_time" content="2025-07-22T12:12:06.921Z">
+<meta property="article:author" content="李贝贝">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/picture/touxiang.jpeg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Vue八股文自整合通俗易懂版下",
+  "url": "http://example.com/2025/07/22/Vue%E5%85%AB%E8%82%A1%E6%96%87%E8%87%AA%E6%95%B4%E5%90%88%E9%80%9A%E4%BF%97%E6%98%93%E6%87%82%E7%89%88%E4%B8%8B/",
+  "image": "http://example.com/picture/touxiang.jpeg",
+  "datePublished": "2025-07-22T12:00:41.774Z",
+  "dateModified": "2025-07-22T12:12:06.921Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "李贝贝",
+      "url": "http://example.com/"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2025/07/22/Vue%E5%85%AB%E8%82%A1%E6%96%87%E8%87%AA%E6%95%B4%E5%90%88%E9%80%9A%E4%BF%97%E6%98%93%E6%87%82%E7%89%88%E4%B8%8B/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: 'Copy Successful',
+    error: 'Copy Failed',
+    noSupport: 'Browser Not Supported'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: 'Just now',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: 'Load More'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Vue八股文自整合通俗易懂版下',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 7.3.0"></head><body><div id="web_bg" style="background-image: url(picture/top1.jpeg);"></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(picture/top1.jpeg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">hexo</span></a><a class="nav-page-title" href="/"><span class="site-name">Vue八股文自整合通俗易懂版下</span></a></span><div id="menus"></div></nav><div id="post-info"><h1 class="post-title">Vue八股文自整合通俗易懂版下</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2025-07-22T12:00:41.774Z" title="Created 2025-07-22 20:00:41">2025-07-22</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2025-07-22T12:12:06.921Z" title="Updated 2025-07-22 20:12:06">2025-07-22</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post Views:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h2 id="四、路由"><a href="#四、路由" class="headerlink" title="四、路由"></a>四、路由</h2><h3 id="2-路由的hash和history模式的区别"><a href="#2-路由的hash和history模式的区别" class="headerlink" title="2. 路由的hash和history模式的区别"></a>2. 路由的hash和history模式的区别</h3><p>Vue-Router的hash和history模式，主要区别如下：</p>
+<ol>
+<li>URL表现</li>
+</ol>
+<ul>
+<li>hash模式：URL里带 # ，比如 xxx.com&#x2F;#&#x2F;page ， # 后面的部分就是hash值。</li>
+<li>history模式：URL里没有 # ，和正常网址一样，比如 xxx.com&#x2F;page 。</li>
+</ul>
+<ol start="2">
+<li>原理与页面刷新</li>
+</ol>
+<ul>
+<li>hash模式：通过监听 onhashchange 事件，改变 # 后面的内容时，不会向服务器发请求，页面不刷新。</li>
+<li>history模式：用HTML5的 pushState 等API改变URL，同样不刷新页面，但刷新时如果服务器没对应配置，会出现404。</li>
+</ul>
+<ol start="3">
+<li>对后端的依赖</li>
+</ol>
+<ul>
+<li>hash模式：完全不影响后端，因为 # 后面的内容不会发给服务器，不用担心404。</li>
+<li>history模式：需要后端配合配置，否则刷新页面可能返回404（因为浏览器会真实请求这个URL）。</li>
+</ul>
+<ol start="4">
+<li>功能差异</li>
+</ol>
+<ul>
+<li>history模式更灵活，能设置更丰富的URL（同域名下任意URL），还能存额外数据；hash模式只能改 # 后面的部分，能存的数据有限。</li>
+<li>hash模式兼容性更好，老浏览器（如低版本IE）也支持；history模式依赖HTML5 API，兼容性稍差。</li>
+</ul>
+<p>简单说，hash模式带 # 、兼容性好、不用后端配；history模式URL更美观、功能多，但需要后端支持，否则可能404。</p>
+<p>404：是一种HTTP状态码，它表示服务器无法根据客户端的请求找到相应的资源（网页）。通常是因为客户端发送给服务器的URL写错了，或者该资源原本存在但已被删除或移动等。</p>
+<h3 id="10-对前端路由的理解"><a href="#10-对前端路由的理解" class="headerlink" title="10. 对前端路由的理解"></a>10. 对前端路由的理解</h3><p>前端路由是单页面应用（SPA）里的一种技术，核心作用是**：在不刷新页面的情况下，让不同内容对应不同的URL，方便用户前进、后退、刷新，还能优化SEO。**</p>
+<p>为什么需要它？<br>SPA只有一个页面，原本无论内容怎么变，URL都不变。用户刷新页面就会回到初始状态，而且搜索引擎也抓不到不同内容。前端路由就是给每个内容片段分配一个唯一URL，解决这些问题。</p>
+<p>怎么实现的？<br>核心是“拦截URL变化，用JS更新内容”：</p>
+<ul>
+<li>不让浏览器因为URL变了就去请求服务器（避免刷新）。</li>
+<li>自己监听URL的变化（比如hash模式的 # 后面部分变了，或history模式的API操作），然后根据不同URL展示对应的组件&#x2F;内容。</li>
+</ul>
+<p>简单说，前端路由就是前端自己管理URL和内容的对应关系，让单页应用像多页应用一样有“页面感”，但体验更流畅。</p>
+<h2 id="五、Vuex"><a href="#五、Vuex" class="headerlink" title="五、Vuex"></a>五、Vuex</h2><h3 id="1-Vuex-的原理"><a href="#1-Vuex-的原理" class="headerlink" title="1. Vuex 的原理"></a>1. Vuex 的原理</h3><p>Vuex 是 Vue 里管理全局状态的工具，核心是一个“仓库（store）”，把组件共享的数据集中存这里，实现数据统一管理。</p>
+<p>流程很简单：</p>
+<ol>
+<li>组件里通过  dispatch  触发  actions （可以处理异步，比如调接口）；</li>
+<li>actions  通过  commit  调用  mutations ；</li>
+<li>mutations  直接修改  state  里的数据；</li>
+<li>state  变化后，组件会自动更新渲染。</li>
+</ol>
+<p>简单说就是：组件→actions（处理异步）→mutations（改数据）→state（存数据）→组件更新。</p>
+<h3 id="2-Vuex中action和mutation的区别"><a href="#2-Vuex中action和mutation的区别" class="headerlink" title="2. Vuex中action和mutation的区别"></a>2. Vuex中action和mutation的区别</h3><ul>
+<li>mutation：只能同步操作，是修改  state  的唯一方式，通过  commit  触发。</li>
+<li>action：可以处理异步（比如请求接口），不能直接改  state ，必须通过  commit  调用  mutation ，通过  dispatch  触发。</li>
+</ul>
+<p>一句话：mutation 负责“同步改数据”，action 负责“处理异步，再让 mutation 改数据”。</p>
+<h3 id="4-Redux-和-Vuex-有什么区别，它们的共同思想"><a href="#4-Redux-和-Vuex-有什么区别，它们的共同思想" class="headerlink" title="4. Redux 和 Vuex 有什么区别，它们的共同思想"></a>4. Redux 和 Vuex 有什么区别，它们的共同思想</h3><p>共同点</p>
+<p>两者都是管理全局状态的工具，核心思想一致：</p>
+<ul>
+<li>都有一个<strong>单一数据源</strong>（全局只存一份数据）；</li>
+<li>数据变化<strong>可预测</strong>（改数据有固定流程，方便追踪）；</li>
+<li>本质都是把数据从视图中抽离，让状态管理更清晰。</li>
+</ul>
+<p>区别</p>
+<ul>
+<li>写法简化：Vuex 比 Redux 简单。Redux 用  reducer （需要 switch 判断）处理数据，Vuex 用  mutations  直接改数据，不用写复杂逻辑；</li>
+<li>异步处理：Redux 里异步操作要放  action  里，还可能需要中间件（如 thunk）；Vuex 直接在  actions  里写异步，更直观；</li>
+<li>自动渲染：Vuex 借助 Vue 的响应式，数据变了组件自动更；Redux 需手动订阅数据变化来触发渲染。</li>
+</ul>
+<p>简单说：两者思想相通，都是管全局数据的，但 Vuex 更贴合 Vue 的特性，用起来更简单；Redux 流程更严谨，适合 React 生态。</p>
+<h2 id="六、Vue-3-0"><a href="#六、Vue-3-0" class="headerlink" title="六、Vue 3.0"></a>六、Vue 3.0</h2><h3 id="1-Vue3-0有什么更新"><a href="#1-Vue3-0有什么更新" class="headerlink" title="1. Vue3.0有什么更新"></a>1. Vue3.0有什么更新</h3><ol>
+<li>数据响应式升级：<br>用  Proxy  代替了 Vue2 的  Object.defineProperty ，能直接监听整个对象（包括新增&#x2F;删除属性、数组索引变化等），解决了 Vue2 里数据监听的各种限制（比如不能监听数组长度变化）。</li>
+<li>性能优化：<br>模板里的作用域插槽改成函数形式，父组件不会因为子组件插槽变化而重新渲染，渲染性能更好。</li>
+<li>组件写法更灵活：<br>支持类式组件声明，和 TypeScript 结合更方便；还能直接用  setup  函数写逻辑，不用再写  data 、 methods  这种选项式写法。</li>
+<li>新增功能：<br>支持多根节点（Fragment）、在 DOM 其他地方渲染组件（Portal），还有更好的 Tree-shaking 优化（打包更小）。</li>
+</ol>
+<h3 id="2-defineProperty和proxy的区别"><a href="#2-defineProperty和proxy的区别" class="headerlink" title="2. defineProperty和proxy的区别"></a>2. defineProperty和proxy的区别</h3><ul>
+<li>Vue2（defineProperty）：只能监听对象的某个属性，新增&#x2F;删除属性、数组下标变化都监听不到，得用  $set  手动处理。</li>
+<li>Vue3（Proxy）：直接代理整个对象，不管新增、删除属性，还是数组变化，都能自动监听，更强大、更省心。</li>
+</ul>
+<p>简单说，Vue3 主要胜在响应式更完善、性能更好、写法更灵活，对开发者更友好~</p>
+<h2 id="七、虚拟DOM"><a href="#七、虚拟DOM" class="headerlink" title="七、虚拟DOM"></a>七、虚拟DOM</h2><h3 id="1-对虚拟DOM的理解？"><a href="#1-对虚拟DOM的理解？" class="headerlink" title="1. 对虚拟DOM的理解？"></a>1. 对虚拟DOM的理解？</h3><p>虚拟DOM简单说就是用JavaScript对象来描述真实的DOM结构。</p>
+<p>比如一个真实的 <div class="box">Hello</div> ，虚拟DOM可能长这样： { tag: ‘div’, attrs: { class: ‘box’ }, text: ‘Hello’ } 。</p>
+<p>作用：</p>
+<ol>
+<li>提升性能：数据变化时，先对比新旧两个虚拟DOM对象（用diff算法），只把不一样的地方更新到真实DOM上，减少直接操作DOM的次数（DOM操作很耗性能）。</li>
+<li>跨平台：虚拟DOM是JS对象，不依赖浏览器环境，能轻松实现多端渲染（比如网页、手机App、服务端渲染SSR）。</li>
+<li>简化开发：不用手动写操作DOM的代码，框架会自动通过虚拟DOM处理渲染，开发者更专注业务逻辑。</li>
+</ol>
+<p>简单说，虚拟DOM就是DOM的“轻量替身”，帮我们高效、跨平台地更新页面。</p>
+<p><strong>面试官</strong>问起对虚拟DOM的理解时，你可以这样回答，既简洁又能抓住重点：</p>
+<p>“虚拟DOM其实就是用JavaScript对象来描述真实的DOM结构，比如一个div标签，会被描述成包含标签名、属性、子元素等信息的对象。</p>
+<p>它的主要作用有两个：一是提升性能，数据变化时，先通过diff算法对比新旧虚拟DOM的差异，只更新变化的部分到真实DOM，减少DOM操作的开销；二是方便跨平台，因为虚拟DOM是纯JS对象，不依赖浏览器环境，能轻松支持服务端渲染、移动端等场景。</p>
+<p>对开发者来说，不用手动操作DOM，框架会通过虚拟DOM自动处理渲染，让我们更专注业务逻辑。”</p>
+<p>这样回答既解释了核心概念，又说明了作用，语言口语化，适合面试场景~</p>
+<h3 id="5-Diff算法的原理"><a href="#5-Diff算法的原理" class="headerlink" title="5.Diff算法的原理"></a>5.Diff算法的原理</h3><p>Diff算法是虚拟DOM更新时，对比新旧虚拟DOM差异的方法，核心是高效找出变化的部分，原理可以简单总结为：</p>
+<ol>
+<li>先比自身：判断新旧节点是不是同一个（比如标签名、key相同），不是就直接删旧换新。</li>
+<li>再比子节点：</li>
+</ol>
+<ul>
+<li>若一方有子节点、一方没有，直接增删子节点。</li>
+<li>若双方都有子节点，就用“同层比较”（只比同一层级的子节点，不跨级比），通过key匹配相同子节点，递归比较它们的差异。</li>
+</ul>
+<p>这样一来，把原本复杂的对比（时间复杂度O(n³)）简化成了O(n)，效率很高。</p>
+<p>简单说，Diff就是“先看自己是不是同一个节点，再高效对比子节点，只更改变化的部分”。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>Author: </span><span class="post-copyright-info"><a href="http://example.com">李贝贝</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>Link: </span><span class="post-copyright-info"><a href="http://example.com/2025/07/22/Vue%E5%85%AB%E8%82%A1%E6%96%87%E8%87%AA%E6%95%B4%E5%90%88%E9%80%9A%E4%BF%97%E6%98%93%E6%87%82%E7%89%88%E4%B8%8B/">http://example.com/2025/07/22/Vue%E5%85%AB%E8%82%A1%E6%96%87%E8%87%AA%E6%95%B4%E5%90%88%E9%80%9A%E4%BF%97%E6%98%93%E6%87%82%E7%89%88%E4%B8%8B/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>Copyright Notice: </span><span class="post-copyright-info">All articles on this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless otherwise stated.</span></div></div><div class="tag_share"><div class="post-share"><div class="social-share" data-image="/picture/touxiang.jpeg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/07/22/Vue%E5%85%AB%E8%82%A1%E6%96%87%E8%87%AA%E6%95%B4%E5%90%88%E9%80%9A%E4%BF%97%E6%98%93%E6%87%82%E7%89%88%E4%B8%8A/" title="Vue八股文自整合通俗易懂版上"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">Previous</div><div class="info-item-2">Vue八股文自整合通俗易懂版上</div></div><div class="info-2"><div class="info-item-1">一、Vue 基础1. Vue的基本原理 Vue基本原理  Vue会给数据（data里的内容）加上“监听器”，一旦数据被读取或修改，它能立刻知道。每个组件都有个“观察者”，会盯着用到的数据。当数据变了，“观察者”就会让组件重新渲染，更新页面。  （Vue3用Proxy，比Vue2的Object.defineProperty监听更全面，能直接监听到对象新增&#x2F;删除属性等情况。）  2. 双向数据绑定的原理简单说就是“数据变，页面跟着变；页面改，数据也跟着变”。  先给所有数据加“监听器”（Observer），数据一变就发通知。 解析模板（Compile），把数据显示到页面，同时给输入框等元素绑上事件，页面改动时能更新数据。 用“订阅者”（Watcher）当中间桥梁，数据变了就告诉页面更新，页面改了就告诉数据同步。三者配合，实现双向绑定。  4....</div></div></div></a><a class="pagination-related" href="/2025/07/22/%E3%80%8A%E4%B8%80%E6%96%87%E7%9C%8B%E6%87%82Node.js%E3%80%81nvm%E3%80%81npm%E3%80%81npx%EF%BC%9A%E8%B0%81%E6%98%AF%E5%A4%A7%E5%8E%A8%EF%BC%9F%E8%B0%81%E6%98%AF%E8%B0%83%E5%BA%A6%E5%91%98%EF%BC%9F%E3%80%8B/" title="《一文看懂Node.js、nvm、npm、npx：谁是大厨？谁是调度员？》"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">Next</div><div class="info-item-2">《一文看懂Node.js、nvm、npm、npx：谁是大厨？谁是调度员？》</div></div><div class="info-2"><div class="info-item-1">如下：  node.js:首先刚开始的时候JavaScript只能在浏览器中运行，后来为了解决这个问题呢，就出现了node js，它可以充当一个，让JavaScript走出浏览器的户外炉灶，让它可以不仅在浏览器里运行，也可以在服务器端运行(就是后端)  nvm:随着node js的使用，又出现了非常多的版本，那作为程序员来说的话，各个版本都有可能要使用到，所以就出现了NVM，它就充当了node.js版本的一个调度员哦，你使用什么它就能给你切换出来  npm:在项目开发当中需要用到包，包就相当于项目中的某一个功能模板，一个项目中就会涉及很多个包，那这些包其实有的，比如说像登录的这样一个功能的，其实很多项目都会用到这样的一个包那为了方便，就用到了NPM，它就是一个带我们安装不同功能包的一个安装器，你后面可以利用它嗯，一键升级，一键卸载，还有一键管理都OK，相当于你把工具带回家。  npx:那如果你只是想在你的项目里临时跑一个命令，而不需要添加整个包的时候，我们这个时候就会涉及到npx，跑完这个命令之后呃，它就离开了。相当于一个临时的工具用完就撤了。   </div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/picture/touxiang.jpeg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">李贝贝</div><div class="author-info-description">小草正在长大~</div><div class="site-data"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">11</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://haiyong.site/moyu/"><i class="iconfont icon-youxishoubing"></i><span>摸鱼</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>Announcement</span></div><div class="announcement_content"><b><font color="#e66b6d">我</font> <font color="#e66d98">热</font> <font color="#e66cc6">爱</font> <font color="#cc6de6">我</font> </b> <p align="center">QQ:3151897241</p></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Contents</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E8%B7%AF%E7%94%B1"><span class="toc-number">1.</span> <span class="toc-text">四、路由</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E8%B7%AF%E7%94%B1%E7%9A%84hash%E5%92%8Chistory%E6%A8%A1%E5%BC%8F%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">1.1.</span> <span class="toc-text">2. 路由的hash和history模式的区别</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#10-%E5%AF%B9%E5%89%8D%E7%AB%AF%E8%B7%AF%E7%94%B1%E7%9A%84%E7%90%86%E8%A7%A3"><span class="toc-number">1.2.</span> <span class="toc-text">10. 对前端路由的理解</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81Vuex"><span class="toc-number">2.</span> <span class="toc-text">五、Vuex</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-Vuex-%E7%9A%84%E5%8E%9F%E7%90%86"><span class="toc-number">2.1.</span> <span class="toc-text">1. Vuex 的原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-Vuex%E4%B8%ADaction%E5%92%8Cmutation%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">2.2.</span> <span class="toc-text">2. Vuex中action和mutation的区别</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-Redux-%E5%92%8C-Vuex-%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB%EF%BC%8C%E5%AE%83%E4%BB%AC%E7%9A%84%E5%85%B1%E5%90%8C%E6%80%9D%E6%83%B3"><span class="toc-number">2.3.</span> <span class="toc-text">4. Redux 和 Vuex 有什么区别，它们的共同思想</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD%E3%80%81Vue-3-0"><span class="toc-number">3.</span> <span class="toc-text">六、Vue 3.0</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-Vue3-0%E6%9C%89%E4%BB%80%E4%B9%88%E6%9B%B4%E6%96%B0"><span class="toc-number">3.1.</span> <span class="toc-text">1. Vue3.0有什么更新</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-defineProperty%E5%92%8Cproxy%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">3.2.</span> <span class="toc-text">2. defineProperty和proxy的区别</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83%E3%80%81%E8%99%9A%E6%8B%9FDOM"><span class="toc-number">4.</span> <span class="toc-text">七、虚拟DOM</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%AF%B9%E8%99%9A%E6%8B%9FDOM%E7%9A%84%E7%90%86%E8%A7%A3%EF%BC%9F"><span class="toc-number">4.1.</span> <span class="toc-text">1. 对虚拟DOM的理解？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-Diff%E7%AE%97%E6%B3%95%E7%9A%84%E5%8E%9F%E7%90%86"><span class="toc-number">4.2.</span> <span class="toc-text">5.Diff算法的原理</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Posts</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/07/22/%E3%80%8A%E4%B8%80%E6%96%87%E7%9C%8B%E6%87%82Node.js%E3%80%81nvm%E3%80%81npm%E3%80%81npx%EF%BC%9A%E8%B0%81%E6%98%AF%E5%A4%A7%E5%8E%A8%EF%BC%9F%E8%B0%81%E6%98%AF%E8%B0%83%E5%BA%A6%E5%91%98%EF%BC%9F%E3%80%8B/" title="《一文看懂Node.js、nvm、npm、npx：谁是大厨？谁是调度员？》">《一文看懂Node.js、nvm、npm、npx：谁是大厨？谁是调度员？》</a><time datetime="2025-07-22T12:00:53.219Z" title="Created 2025-07-22 20:00:53">2025-07-22</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/07/22/Vue%E5%85%AB%E8%82%A1%E6%96%87%E8%87%AA%E6%95%B4%E5%90%88%E9%80%9A%E4%BF%97%E6%98%93%E6%87%82%E7%89%88%E4%B8%8B/" title="Vue八股文自整合通俗易懂版下">Vue八股文自整合通俗易懂版下</a><time datetime="2025-07-22T12:00:41.774Z" title="Created 2025-07-22 20:00:41">2025-07-22</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/07/22/Vue%E5%85%AB%E8%82%A1%E6%96%87%E8%87%AA%E6%95%B4%E5%90%88%E9%80%9A%E4%BF%97%E6%98%93%E6%87%82%E7%89%88%E4%B8%8A/" title="Vue八股文自整合通俗易懂版上">Vue八股文自整合通俗易懂版上</a><time datetime="2025-07-22T12:00:26.692Z" title="Created 2025-07-22 20:00:26">2025-07-22</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/07/22/JS%E5%85%AB%E8%82%A1%E6%96%87%E8%87%AA%E6%95%B4%E5%90%88%E9%80%9A%E4%BF%97%E6%98%93%E6%87%82%E7%89%88%E4%B8%8B/" title="JS八股文自整合通俗易懂版下">JS八股文自整合通俗易懂版下</a><time datetime="2025-07-22T12:00:13.444Z" title="Created 2025-07-22 20:00:13">2025-07-22</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/07/22/JS%E5%85%AB%E8%82%A1%E6%96%87%E8%87%AA%E6%95%B4%E5%90%88%E9%80%9A%E4%BF%97%E6%98%93%E6%87%82%E7%89%88%E4%B8%8A/" title="JS八股文自整合通俗易懂版上">JS八股文自整合通俗易懂版上</a><time datetime="2025-07-22T12:00:05.913Z" title="Created 2025-07-22 20:00:05">2025-07-22</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2019 - 2025 By 李贝贝</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.3.5</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Reading Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Toggle Between Light and Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle Between Single-column and Double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="Settings"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back to Top"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"></div><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

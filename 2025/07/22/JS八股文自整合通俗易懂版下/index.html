@@ -1,0 +1,439 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>JS八股文自整合通俗易懂版下 | hexo</title><meta name="author" content="李贝贝"><meta name="copyright" content="李贝贝"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="六、this&#x2F;call&#x2F;apply&#x2F;bind1. 对this对象的理解 this  指的是最后调用函数的那个对象，具体指向看调用方式：  函数调用（如  fn() ）： this  指向全局对象（浏览器里是  window ）。 方法调用（如  obj.fn() ）： this  指向调用方法的对象  obj 。 构造函数调用（如  new Fn() ）： this">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JS八股文自整合通俗易懂版下">
+<meta property="og:url" content="http://example.com/2025/07/22/JS%E5%85%AB%E8%82%A1%E6%96%87%E8%87%AA%E6%95%B4%E5%90%88%E9%80%9A%E4%BF%97%E6%98%93%E6%87%82%E7%89%88%E4%B8%8B/index.html">
+<meta property="og:site_name" content="hexo">
+<meta property="og:description" content="六、this&#x2F;call&#x2F;apply&#x2F;bind1. 对this对象的理解 this  指的是最后调用函数的那个对象，具体指向看调用方式：  函数调用（如  fn() ）： this  指向全局对象（浏览器里是  window ）。 方法调用（如  obj.fn() ）： this  指向调用方法的对象  obj 。 构造函数调用（如  new Fn() ）： this">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/picture/touxiang.jpeg">
+<meta property="article:published_time" content="2025-07-22T12:00:13.444Z">
+<meta property="article:modified_time" content="2025-07-22T12:10:59.318Z">
+<meta property="article:author" content="李贝贝">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/picture/touxiang.jpeg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "JS八股文自整合通俗易懂版下",
+  "url": "http://example.com/2025/07/22/JS%E5%85%AB%E8%82%A1%E6%96%87%E8%87%AA%E6%95%B4%E5%90%88%E9%80%9A%E4%BF%97%E6%98%93%E6%87%82%E7%89%88%E4%B8%8B/",
+  "image": "http://example.com/picture/touxiang.jpeg",
+  "datePublished": "2025-07-22T12:00:13.444Z",
+  "dateModified": "2025-07-22T12:10:59.318Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "李贝贝",
+      "url": "http://example.com/"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2025/07/22/JS%E5%85%AB%E8%82%A1%E6%96%87%E8%87%AA%E6%95%B4%E5%90%88%E9%80%9A%E4%BF%97%E6%98%93%E6%87%82%E7%89%88%E4%B8%8B/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: 'Copy Successful',
+    error: 'Copy Failed',
+    noSupport: 'Browser Not Supported'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: 'Just now',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: 'Load More'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'JS八股文自整合通俗易懂版下',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 7.3.0"></head><body><div id="web_bg" style="background-image: url(picture/top1.jpeg);"></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(picture/top1.jpeg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">hexo</span></a><a class="nav-page-title" href="/"><span class="site-name">JS八股文自整合通俗易懂版下</span></a></span><div id="menus"></div></nav><div id="post-info"><h1 class="post-title">JS八股文自整合通俗易懂版下</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2025-07-22T12:00:13.444Z" title="Created 2025-07-22 20:00:13">2025-07-22</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2025-07-22T12:10:59.318Z" title="Updated 2025-07-22 20:10:59">2025-07-22</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post Views:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h2 id="六、this-call-apply-bind"><a href="#六、this-call-apply-bind" class="headerlink" title="六、this&#x2F;call&#x2F;apply&#x2F;bind"></a>六、this&#x2F;call&#x2F;apply&#x2F;bind</h2><h3 id="1-对this对象的理解"><a href="#1-对this对象的理解" class="headerlink" title="1. 对this对象的理解"></a>1. 对this对象的理解</h3><p> this  指的是<strong>最后调用函数的那个对象</strong>，具体指向看调用方式：</p>
+<ul>
+<li>函数调用（如  fn() ）： this  指向全局对象（浏览器里是  window ）。</li>
+<li>方法调用（如  obj.fn() ）： this  指向调用方法的对象  obj 。</li>
+<li>构造函数调用（如  new Fn() ）： this  指向新创建的实例对象。</li>
+<li>call&#x2F;apply&#x2F;bind 调用： this  指向这三个方法第一个参数指定的对象。</li>
+</ul>
+<p>优先级：构造函数调用 &gt; call&#x2F;apply&#x2F;bind &gt; 方法调用 &gt; 函数调用。</p>
+<h3 id="2-call-和-apply-的区别？"><a href="#2-call-和-apply-的区别？" class="headerlink" title="2. call() 和 apply() 的区别？"></a>2. call() 和 apply() 的区别？</h3><p>两者都能改变  this  指向，<strong>区别仅在传参方式：</strong></p>
+<ul>
+<li><p>call(context, arg1, arg2, …) ：第一个参数是  this  指向，后面是逐个传入的参数。</p>
+</li>
+<li><p>apply(context, [arg1, arg2, …]) ：第一个参数同上，第二个参数是数组或类数组（一次性传入所有参数）。</p>
+</li>
+</ul>
+<h3 id="3-实现call、apply-及-bind-函数"><a href="#3-实现call、apply-及-bind-函数" class="headerlink" title="3. 实现call、apply 及 bind 函数"></a>3. 实现call、apply 及 bind 函数</h3><p><strong>1）call 函数的实现步骤：</strong></p>
+<ul>
+<li>判断调用对象是否为函数，即使是定义在函数的原型上的，但是可能出现使用 call 等方式调用的情况。</li>
+<li>判断传入上下文对象是否存在，如果不存在，则设置为 window 。</li>
+<li>处理传入的参数，截取第一个参数后的所有参数。</li>
+<li>将函数作为上下文对象的一个属性。</li>
+<li>使用上下文对象来调用这个方法，并保存返回结果。</li>
+<li>删除刚才新增的属性。</li>
+<li>返回结果。</li>
+</ul>
+<p>实现myCall</p>
+<p>Function.prototype.myCall &#x3D; function(context) {<br>  &#x2F;&#x2F; 确保调用者是函数<br>  if (typeof this !&#x3D;&#x3D; ‘function’) {<br>    throw new TypeError(‘不是函数’);<br>  }<br>  &#x2F;&#x2F; 处理上下文（默认window）<br>  context &#x3D; context || window;<br>  &#x2F;&#x2F; 把当前函数（this）作为context的临时方法<br>  context.fn &#x3D; this;<br>  &#x2F;&#x2F; 提取参数（除了第一个context）<br>  const args &#x3D; […arguments].slice(1);<br>  &#x2F;&#x2F; 调用函数，得到结果<br>  const result &#x3D; context.fn(…args);<br>  &#x2F;&#x2F; 删除临时方法，避免污染<br>  delete context.fn;<br>  return result;<br>};</p>
+<p><strong>（2）apply 函数的实现步骤：</strong></p>
+<ul>
+<li>判断调用对象是否为函数，即使是定义在函数的原型上的，但是可能出现使用 call 等方式调用的情况。</li>
+<li>判断传入上下文对象是否存在，如果不存在，则设置为 window 。</li>
+<li>将函数作为上下文对象的一个属性。</li>
+<li>判断参数值是否传入</li>
+<li>使用上下文对象来调用这个方法，并保存返回结果。</li>
+<li>删除刚才新增的属性</li>
+<li>返回结果</li>
+</ul>
+<p>（2）实现myApply</p>
+<p>Function.prototype.myApply &#x3D; function(context) {<br>  if (typeof this !&#x3D;&#x3D; ‘function’) {<br>    throw new TypeError(‘不是函数’);<br>  }<br>  context &#x3D; context || window;<br>  context.fn &#x3D; this;<br>  let result;<br>  &#x2F;&#x2F; 第二个参数是数组&#x2F;类数组，没有则不传<br>  if (arguments[1]) {<br>    result &#x3D; context.fn(…arguments[1]);<br>  } else {<br>    result &#x3D; context.fn();<br>  }<br>  delete context.fn;<br>  return result;<br>};</p>
+<p><strong>（3）bind 函数的实现步骤：</strong></p>
+<ul>
+<li>判断调用对象是否为函数，即使是定义在函数的原型上的，但是可能出现使用 call 等方式调用的情况。</li>
+<li>保存当前函数的引用，获取其余传入参数值。</li>
+<li>创建一个函数返回</li>
+<li>函数内部使用 apply 来绑定函数调用，需要判断函数作为构造函数的情况，这个时候需要传入当前函数的 this 给 apply 调用，其余情况都传入指定的上下文对象。</li>
+</ul>
+<p>（3）实现myBind（返回绑定this的新函数，可传部分参数）</p>
+<p>Function.prototype.myBind &#x3D; function(context) {<br>  if (typeof this !&#x3D;&#x3D; ‘function’) {<br>    throw new TypeError(‘不是函数’);<br>  }<br>  const fn &#x3D; this; &#x2F;&#x2F; 保存原函数<br>  const args &#x3D; […arguments].slice(1); &#x2F;&#x2F; 保存bind时的参数<br>  &#x2F;&#x2F; 返回新函数，支持二次传参<br>  return function Fn() {<br>    &#x2F;&#x2F; 如果用new调用新函数，this指向实例；否则指向context<br>    return fn.apply(<br>      this instanceof Fn ? this : context,<br>      args.concat(…arguments) &#x2F;&#x2F; 合并bind时和调用时的参数<br>    );<br>  };<br>};</p>
+<p>面试时，能说清原理+写出核心逻辑即可，重点是体现“临时绑定函数到上下文”“处理参数”“清理临时属性”这几个步骤。</p>
+<h2 id="七、异步编程"><a href="#七、异步编程" class="headerlink" title="七、异步编程"></a>七、异步编程</h2><h3 id="1-异步编程的实现方式？"><a href="#1-异步编程的实现方式？" class="headerlink" title="1. 异步编程的实现方式？"></a>1. 异步编程的实现方式？</h3><p>前端面试中常考，主要有四种：</p>
+<ul>
+<li>回调函数：把异步操作的结果放在回调里执行，但多层嵌套会导致“回调地狱”，代码难维护。</li>
+<li>Promise：通过  then()  链式调用解决回调地狱，避免嵌套，但多个  then  可能让逻辑不够直观。</li>
+<li>Generator：用  yield  暂停执行，能以同步的写法写异步逻辑，但需要手动或借助工具恢复执行，现在用得较少。</li>
+<li>async&#x2F;await：Promise 的语法糖， await  能等待异步完成，代码像同步一样直观，是目前最常用的方式。</li>
+</ul>
+<h3 id="2-setTimeout、Promise、Async-Await-的区别"><a href="#2-setTimeout、Promise、Async-Await-的区别" class="headerlink" title="2. setTimeout、Promise、Async&#x2F;Await 的区别"></a>2. setTimeout、Promise、Async&#x2F;Await 的区别</h3><p>核心区别在<strong>执行时机</strong>（基于事件循环的任务队列）：</p>
+<ul>
+<li>setTimeout：属于**“宏任务”**，回调会在本轮事件循环的主要代码执行完后，等一段时间再执行。</li>
+<li>Promise： new Promise()  本身是同步执行的，但  then&#x2F;catch  里的回调属于**“微任务”**，会在本轮主要代码执行完后、下一个宏任务前立即执行。</li>
+<li>Async&#x2F;Await： async  函数本身同步执行， await  会暂停后续代码，等待 Promise 完成，后续逻辑会作为微任务执行，效果类似 Promise 的  then 。</li>
+</ul>
+<p>简单说：微任务（Promise、async&#x2F;await 后续逻辑）比宏任务（setTimeout）执行得更早。</p>
+<h3 id="3-对Promise的理解"><a href="#3-对Promise的理解" class="headerlink" title="3. 对Promise的理解"></a>3. 对Promise的理解</h3><p>对Promise的理解（面试高频，尽量详细）</p>
+<p>Promise 是 JavaScript 中处理异步操作的一种解决方案，核心作用是<strong>避免回调地狱</strong>，让异步代码的逻辑更清晰、更易维护。</p>
+<ol>
+<li>本质与核心概念</li>
+</ol>
+<ul>
+<li>本质：Promise 是一个对象，里面“包裹”着一个未来才会完成的异步操作（比如网络请求、定时器等），并能存储该操作的结果。</li>
+<li>核心：通过状态管理异步流程，让开发者不用嵌套回调，而是用链式调用的方式处理异步结果。</li>
+</ul>
+<ol start="2">
+<li>三种状态与状态变化</li>
+</ol>
+<ul>
+<li>三种状态：</li>
+<li>pending（进行中）：初始状态，异步操作还没完成。</li>
+<li>fulfilled（已成功）：异步操作完成，且结果有效（比如请求成功返回数据）。</li>
+<li>rejected（已失败）：异步操作出错或被拒绝（比如请求失败、抛出错误）。</li>
+<li>状态变化规则：</li>
+<li>状态只能从  pending  变成  fulfilled ，或从  pending  变成  rejected <strong>（一旦变化就固定，不能再改）</strong>。</li>
+<li>状态变化由异步操作的结果决定：成功时调用  resolve()  触发  pending→fulfilled ；失败时调用  reject()  触发  pending→rejected 。</li>
+</ul>
+<ol start="3">
+<li>核心特点</li>
+</ol>
+<ul>
+<li>状态不受外界影响：只有异步操作的结果能改变 Promise 的状态，其他操作无法干预（比如不能手动把  fulfilled  变回  pending ）。</li>
+<li>结果可追溯：即使异步操作完成后再添加回调，也能拿到之前的结果（区别于事件，事件若错过触发时机就无法获取结果）。</li>
+<li>链式调用：通过  then()  方法可以为  fulfilled  或  rejected  状态注册回调，且  then()  本身返回一个新的 Promise，支持连续链式调用（解决回调嵌套问题）。</li>
+</ul>
+<p> 4**.优点（promise解决的问题）**</p>
+<ul>
+<li><p>解决回调地狱：用  then()  链式调用替代多层嵌套的回调，代码结构更扁平、易读。</p>
+</li>
+<li><p>状态明确：通过状态可以清晰追踪异步操作的进展（是正在进行、成功还是失败）。</p>
+</li>
+<li><p>统一异步处理方式：无论是什么异步操作（网络请求、文件读写等），都可以用 Promise 的 API 统一处理，降低学习成本。</p>
+<p>5.缺点</p>
+</li>
+<li><p>无法取消：一旦创建 Promise，执行器函数就会立即执行，无法中途取消。</p>
+</li>
+<li><p>pending状态无法追踪：处于  pending  时，无法知道异步操作是刚开始还是即将完成。</p>
+</li>
+<li><p>错误沉默：如果不设置  catch()  或  then()  的第二个参数，Promise 内部抛出的错误不会被外部捕获，可能导致逻辑隐患。</p>
+</li>
+</ul>
+<h3 id="4-Promise的基本用法"><a href="#4-Promise的基本用法" class="headerlink" title="4. Promise的基本用法"></a>4. Promise的基本用法</h3><p>Promise的基本用法（实习面试常考，重点掌握核心用法）</p>
+<ol>
+<li>创建Promise对象</li>
+</ol>
+<p>Promise通过构造函数创建，核心是传入一个执行器函数，里面包含异步操作，通过  resolve （成功）和  reject （失败）改变状态。</p>
+<ul>
+<li><p>基本语法：<br>const promise &#x3D; new Promise((resolve, reject) &#x3D;&gt; {<br>&#x2F;&#x2F; 异步操作（如请求、定时器）<br>if (操作成功) {<br>  resolve(结果); &#x2F;&#x2F; 状态从pending→fulfilled，传递成功结果<br>} else {<br>  reject(错误); &#x2F;&#x2F; 状态从pending→rejected，传递失败信息<br>}<br>});</p>
+</li>
+<li><p>快捷创建方式：</p>
+</li>
+<li><p>Promise.resolve(值) ：直接创建一个状态为fulfilled的Promise，相当于  new Promise(resolve &#x3D;&gt; resolve(值)) 。</p>
+</li>
+<li><p>Promise.reject(错误) ：直接创建一个状态为rejected的Promise，相当于  new Promise((_, reject) &#x3D;&gt; reject(错误)) 。</p>
+</li>
+</ul>
+<ol start="2">
+<li>常用方法及作用</li>
+</ol>
+<p>Promise的核心是通过方法处理异步结果，常用方法有：</p>
+<ul>
+<li>then()：处理成功或失败的结果，返回新的Promise，支持链式调用。</li>
+<li>第一个参数：状态为fulfilled时执行（接收成功结果）。</li>
+<li>第二个参数（可选）：状态为rejected时执行（接收失败信息）。</li>
+</ul>
+<p>promise<br>  .then(<br>    (result) &#x3D;&gt; { console.log(“成功：”, result); },<br>    (error) &#x3D;&gt; { console.log(“失败：”, error); }<br>  );</p>
+<ul>
+<li><p>catch()：专门处理失败的结果，相当于  then(null, 错误处理函数) ，更清晰。<br>promise<br>.then(result &#x3D;&gt; { console.log(“成功：”, result); })<br>.catch(error &#x3D;&gt; { console.log(“失败：”, error); }); &#x2F;&#x2F; 捕获reject或then中的错误</p>
+</li>
+<li><p>all()：并行处理多个Promise，<strong>全部成功才返回结果</strong>（结果按传入顺序组成数组），只要有一个失败就立即返回错误。<br>const p1 &#x3D; Promise.resolve(1);<br>const p2 &#x3D; Promise.resolve(2);<br>Promise.all([p1, p2]).then(results &#x3D;&gt; {<br>console.log(results); &#x2F;&#x2F; [1, 2]（全部成功）<br>}).catch(error &#x3D;&gt; {<br>console.log(error); &#x2F;&#x2F; 只要有一个失败就执行<br>});</p>
+</li>
+<li><p>race()：并行处理多个Promise，<strong>谁先完成就返回谁的结果</strong>（不管成功还是失败）。<br>const p1 &#x3D; new Promise(resolve &#x3D;&gt; setTimeout(() &#x3D;&gt; resolve(1), 1000));<br>const p2 &#x3D; new Promise(resolve &#x3D;&gt; setTimeout(() &#x3D;&gt; resolve(2), 500));<br>Promise.race([p1, p2]).then(result &#x3D;&gt; {<br>console.log(result); &#x2F;&#x2F; 2（p2先完成）<br>});</p>
+</li>
+<li><p>finally()：不管状态是成功还是失败，**最终都会执行（**不接收参数，常用于清理操作，如关闭加载动画）。<br>promise<br>.then(result &#x3D;&gt; { … })<br>.catch(error &#x3D;&gt; { … })<br>.finally(() &#x3D;&gt; { console.log(“操作结束，无论成功失败都执行”); });</p>
+</li>
+</ul>
+<ol start="3">
+<li>核心场景：链式调用解决异步依赖</li>
+</ol>
+<p>当异步操作有顺序依赖（如先请求A，再用A的结果请求B），用then()链式调用更清晰：</p>
+<p>&#x2F;&#x2F; 先执行异步操作1，再执行异步操作2<br>firstAsync() &#x2F;&#x2F; 返回Promise<br>  .then(result1 &#x3D;&gt; {<br>    return secondAsync(result1); &#x2F;&#x2F; 用result1作为参数，执行第二个异步操作<br>  })<br>  .then(result2 &#x3D;&gt; {<br>    console.log(“最终结果：”, result2); &#x2F;&#x2F; 得到第二个操作的结果<br>  })<br>  .catch(error &#x3D;&gt; {<br>    console.log(“整个链条中的错误：”, error); &#x2F;&#x2F; 捕获链条中任何一步的错误<br>  });</p>
+<p>总结</p>
+<p>Promise的用法核心是<strong>创建实例→用then&#x2F;catch处理结果→用all&#x2F;race处理多个异步</strong>，重点理解链式调用的逻辑（实习面试中可能会让手写简单的链式调用场景，比如处理两个依赖的异步请求）。</p>
+<h3 id="6-Promise-all和Promise-race的区别的使用场景"><a href="#6-Promise-all和Promise-race的区别的使用场景" class="headerlink" title="6. Promise.all和Promise.race的区别的使用场景"></a>6. Promise.all和Promise.race的区别的使用场景</h3><p>区别</p>
+<ul>
+<li><p>Promise.all：等待所有传入的Promise都完成（都成功），才返回结果数组（顺序和传入的Promise数组一致）；只要有一个失败，就立即返回该失败信息。</p>
+</li>
+<li><p>Promise.race：哪个传入的Promise先完成（不管成功还是失败），就返回哪个的结果，其他的不再等待。</p>
+</li>
+</ul>
+<p>使用场景</p>
+<ul>
+<li><p>Promise.all：适合需要<strong>所有异步操作都完成后再处理的场景</strong>，比如页面初始化时，需要同时加载用户信息、商品列表、公告数据，全部加载完才渲染页面。</p>
+</li>
+<li><p>Promise.race：适合有<strong>超时限制</strong>的场景，比如请求接口时，设置5秒超时，如果5秒内没返回结果，就提示“请求超时”（用一个超时Promise和接口Promise一起传入 race ）。</p>
+</li>
+</ul>
+<h3 id="7-对async-await-的理解"><a href="#7-对async-await-的理解" class="headerlink" title="7. 对async&#x2F;await 的理解"></a>7. 对async&#x2F;await 的理解</h3><p>对async&#x2F;await的理解（面试高频，重点掌握）</p>
+<p>async&#x2F;await 是 JavaScript 中处理异步操作的语法糖，基于 Promise 实现，让异步代码写起来像同步代码一样直观。</p>
+<ol>
+<li>核心作用</li>
+</ol>
+<p>解决 Promise 链式调用（ then  链）可能带来的代码冗余，让异步逻辑的流程更清晰，尤其是多个依赖的异步操作时，比  then  链更易读。</p>
+<ol start="2">
+<li>基本用法与特点</li>
+</ol>
+<ul>
+<li>async：用于声明一个函数是异步的，<strong>该函数的返回值会自动包装成 Promise 对象</strong>（即使 return 普通值，也会变成  Promise.resolve(值) ）。</li>
+<li>await：只能用在 async 函数内部，<strong>用于等待一个 Promise 完成</strong>，并获取其成功的结果。如果等待的不是 Promise，会直接返回该值。</li>
+</ul>
+<ol start="3">
+<li>关键逻辑</li>
+</ol>
+<ul>
+<li>当执行到  await  时，会暂停当前 async 函数的执行，等待后面的 Promise 状态变为 fulfilled，然后继续执行  await  之后的代码（不会阻塞整个程序，其他同步代码可以正常执行）。</li>
+<li>整个 async 函数的执行过程是异步的，但代码看起来像同步流程，避免了嵌套或长链式调用。</li>
+</ul>
+<ol start="4">
+<li>为什么需要async&#x2F;await？</li>
+</ol>
+<p>比如有三个依赖的异步操作（A→B→C，B需要A的结果，C需要B的结果）：</p>
+<ul>
+<li>用 Promise 的  then  链会写成： A().then(B).then(C).then(…) ，虽然比回调地狱好，但链条长了仍不够直观。</li>
+<li>用 async&#x2F;await 则是：<br>async function run() {<br>const a &#x3D; await A(); &#x2F;&#x2F; 等A完成<br>const b &#x3D; await B(a); &#x2F;&#x2F; 用A的结果等B完成<br>const c &#x3D; await C(b); &#x2F;&#x2F; 用B的结果等C完成<br>console.log(c);<br>}</li>
+</ul>
+<p>代码完全按执行顺序书写，更接近同步逻辑的思维方式。</p>
+<p>总结</p>
+<p>async&#x2F;await 是 Promise 的“语法糖”，核心优势是<strong>让异步代码的流程更直观、易维护</strong>，本质上还是基于 Promise 的异步机制，适合处理有依赖关系的多个异步操作。实习面试中可能会结合具体场景（如多个接口请求依赖）问用法，理解其简化异步流程的作用即可。</p>
+<h3 id="8-await-到底在等啥？"><a href="#8-await-到底在等啥？" class="headerlink" title="8. await 到底在等啥？"></a>8. await 到底在等啥？</h3><p> await  等待的是<strong>一个表达式的结果</strong>，这个结果可以是：</p>
+<ul>
+<li>Promise 对象：此时  await  会暂停当前 async 函数的执行，等待这个 Promise 状态变为“成功”，然后返回其成功的值，再继续执行后面的代码。</li>
+<li>非 Promise 值（如普通数字、字符串、函数返回的直接值）：此时  await  会直接返回这个值，不会暂停，相当于“等待一个立即完成的操作”。</li>
+</ul>
+<p>简单说， await  的作用是“等待异步操作的结果”，不管这个异步操作是通过 async 函数返回的 Promise，还是其他方式创建的 Promise。</p>
+<h3 id="9-async-await的优势"><a href="#9-async-await的优势" class="headerlink" title="9. async&#x2F;await的优势"></a>9. async&#x2F;await的优势</h3><p>相比 Promise 的  then  链式调用，async&#x2F;await 的核心优势是<strong>让异步代码更像同步代码</strong>，逻辑更清晰，尤其是处理多个有依赖的异步步骤时：</p>
+<ul>
+<li>代码结构更直观：多个依赖的异步操作（比如步骤1→步骤2→步骤3，后一步需要前一步的结果），用  await  可以按执行顺序平铺书写，不用嵌套或链式调用  then 。</li>
+<li>错误处理更简单：可以用  try&#x2F;catch  统一捕获整个流程中的错误（包括 Promise 的  reject ），而不用在每个  then  里单独处理错误。</li>
+</ul>
+<p>例如，三个依赖的异步步骤，用 async&#x2F;await 写出来像同步逻辑一样，比  then  链更易读、易维护。</p>
+<p>面试中可能会结合具体场景（如多步异步请求）问优势，理解“简化异步流程、让代码更直观”是核心。</p>
+<h3 id="10-async-await对比Promise的优势"><a href="#10-async-await对比Promise的优势" class="headerlink" title="10. async&#x2F;await对比Promise的优势"></a>10. async&#x2F;await对比Promise的优势</h3><p>async&#x2F;await 相比 Promise 的优势主要有这几点：</p>
+<ul>
+<li>代码更像同步逻辑：Promise 的  then  链式调用虽然比回调地狱好，但还是有链式结构的阅读负担；async&#x2F;await 直接按步骤顺序写，读起来和同步代码一样直观。</li>
+<li>传递中间值更方便：多个步骤依赖时（比如 step1 的结果给 step2，step2 的结果给 step3），Promise 需要在  then  里手动传递，而 async&#x2F;await 直接用变量接收，像同步赋值一样简单。</li>
+<li>错误处理更简单：可以用  try&#x2F;catch  一次性捕获整个流程的错误（包括所有 Promise 的失败），不用在每个  then  里单独处理，代码更简洁。</li>
+<li>调试更友好：调试时能像同步代码一样一步步执行，而 Promise 的  then  链因为是异步回调，调试时不好跟踪每一步。</li>
+</ul>
+<h2 id="八、面向对象"><a href="#八、面向对象" class="headerlink" title="八、面向对象"></a>八、面向对象</h2><h3 id="1-对象创建的方式有哪些？"><a href="#1-对象创建的方式有哪些？" class="headerlink" title="1. 对象创建的方式有哪些？"></a>1. 对象创建的方式有哪些？</h3><p>JavaScript 中创建对象的常用方式有以下几种，各有特点：</p>
+<ul>
+<li><p>字面量方式：直接用  {}  创建，简单直观，适合创建单个对象，但创建多个相似对象时会有重复代码。<br>const obj &#x3D; { name: ‘张三’, age: 20 };</p>
+</li>
+<li><p>工厂模式：用函数封装创建对象的逻辑，通过函数调用生成对象，实现复用，但创建的对象无法识别类型（比如分不清是哪个函数创建的）。</p>
+</li>
+<li><p>构造函数模式：用  new  调用函数创建对象，函数内部用  this  赋值，创建的对象能通过  instanceof  识别类型，但每个实例的函数属性都是新创建的，浪费内存。<br>function Person(name) { this.name &#x3D; name; }<br>const p &#x3D; new Person(‘张三’); &#x2F;&#x2F; p 是 Person 类型</p>
+</li>
+<li><p>原型模式：将共享的属性&#x2F;方法放在函数的  prototype  上，所有实例共享这些内容，节省内存，但无法通过参数初始化实例属性，且引用类型属性会被所有实例共享（修改一个会影响其他）。</p>
+</li>
+<li><p>组合模式（最常用）：构造函数初始化实例属性，原型模式定义共享方法，结合两者优点，既支持参数初始化，又能共享方法。</p>
+</li>
+<li><p>动态原型模式：在构造函数内部判断，只在第一次调用时初始化原型方法，优化组合模式的代码结构。</p>
+</li>
+<li><p>寄生构造函数模式：类似工厂模式，在函数内部创建对象并扩展，返回新对象，适合给已有类型（如数组）添加额外属性，但创建的对象无法识别类型。</p>
+</li>
+</ul>
+<h3 id="2-对象继承的方式有哪些？"><a href="#2-对象继承的方式有哪些？" class="headerlink" title="2. 对象继承的方式有哪些？"></a>2. 对象继承的方式有哪些？</h3><p>继承主要是让子类复用父类的属性和方法，常见方式：</p>
+<ul>
+<li>原型链继承：让子类原型指向父类实例，实现方法复用，但父类的引用类型属性会被所有子类实例共享，且无法给父类构造函数传参。</li>
+<li>借用构造函数：子类构造函数内部用  call&#x2F;apply  调用父类构造函数，解决传参问题，但无法复用父类原型上的方法。</li>
+<li>组合继承（常用）：结合原型链和借用构造函数，既复用父类方法，又能传参初始化属性，但父类构造函数会被调用两次，子类原型上会有多余属性。</li>
+<li>原型式继承：基于已有对象创建新对象（如  Object.create() ），适合简单继承，但和原型链继承一样有引用类型共享问题。</li>
+<li>寄生式继承：对原型式继承的扩展，给新对象添加属性&#x2F;方法，适合增强单个对象，但无法复用方法，每次创建都会新建函数。</li>
+<li>寄生组合继承（最佳）：用父类原型的副本作为子类原型，避免组合继承中父类构造函数被调用两次的问题，是最理想的继承方式。</li>
+</ul>
+<h2 id="九、垃圾回收与内存泄漏"><a href="#九、垃圾回收与内存泄漏" class="headerlink" title="九、垃圾回收与内存泄漏"></a>九、垃圾回收与内存泄漏</h2><h3 id="1-浏览器的垃圾回收机制"><a href="#1-浏览器的垃圾回收机制" class="headerlink" title="1. 浏览器的垃圾回收机制"></a>1. 浏览器的垃圾回收机制</h3><p>垃圾回收是浏览器自动释放不再使用的变量&#x2F;对象所占用内存的机制，目的是避免内存浪费。</p>
+<p>核心原理</p>
+<ul>
+<li>回收对象：不再被引用的变量或对象（比如函数执行完后，内部未被外部引用的局部变量）。</li>
+<li>两种主要方式：</li>
+<li>标记清除（最常用）：</li>
+</ul>
+<ol>
+<li>给所有变量加“标记”；</li>
+<li>去掉仍在使用的变量（如当前作用域内的变量、被引用的变量）的标记；</li>
+<li>剩下带标记的变量被视为“垃圾”，内存被释放。</li>
+</ol>
+<ul>
+<li>引用计数（较少用）：</li>
+</ul>
+<ol>
+<li>记录每个值被引用的次数（被引用一次+1，取消引用-1）；</li>
+<li>引用次数为0时，内存被释放。</li>
+<li>缺点：循环引用（如A引用B，B引用A）会导致引用次数永远不为0，内存无法释放，需要手动设为 null 解决。</li>
+</ol>
+<p>减少垃圾回收的小技巧</p>
+<ul>
+<li>清空数组用 arr.length &#x3D; 0 ，而非重新赋值 [] （避免创建新对象）；</li>
+<li>不再用的对象及时设为 null ；</li>
+<li>循环中的函数尽量提到外面复用，避免重复创建。</li>
+</ul>
+<h3 id="2-哪些情况会导致内存泄漏"><a href="#2-哪些情况会导致内存泄漏" class="headerlink" title="2. 哪些情况会导致内存泄漏"></a>2. 哪些情况会导致内存泄漏</h3><p>内存泄漏指不再需要的内存没被释放，导致占用越来越多，影响性能。常见情况：</p>
+<ul>
+<li>意外全局变量：未声明的变量（如 a &#x3D; 1 而非 let a &#x3D; 1 ）变成全局变量，一直占内存。</li>
+<li>忘记清除的计时器： setInterval 没被 clearInterval 取消，且内部引用了外部变量，变量会一直被保留。</li>
+<li>脱离DOM的引用：获取DOM元素后，元素被删除，但代码中仍保留对它的引用，导致无法回收。</li>
+<li>不合理的闭包：闭包引用了外部变量，且该变量一直被使用（如闭包未释放），导致变量无法回收。</li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>Author: </span><span class="post-copyright-info"><a href="http://example.com">李贝贝</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>Link: </span><span class="post-copyright-info"><a href="http://example.com/2025/07/22/JS%E5%85%AB%E8%82%A1%E6%96%87%E8%87%AA%E6%95%B4%E5%90%88%E9%80%9A%E4%BF%97%E6%98%93%E6%87%82%E7%89%88%E4%B8%8B/">http://example.com/2025/07/22/JS%E5%85%AB%E8%82%A1%E6%96%87%E8%87%AA%E6%95%B4%E5%90%88%E9%80%9A%E4%BF%97%E6%98%93%E6%87%82%E7%89%88%E4%B8%8B/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>Copyright Notice: </span><span class="post-copyright-info">All articles on this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless otherwise stated.</span></div></div><div class="tag_share"><div class="post-share"><div class="social-share" data-image="/picture/touxiang.jpeg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/07/22/JS%E5%85%AB%E8%82%A1%E6%96%87%E8%87%AA%E6%95%B4%E5%90%88%E9%80%9A%E4%BF%97%E6%98%93%E6%87%82%E7%89%88%E4%B8%8A/" title="JS八股文自整合通俗易懂版上"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">Previous</div><div class="info-item-2">JS八股文自整合通俗易懂版上</div></div><div class="info-2"><div class="info-item-1">一、数据类型1. JavaScript有哪些数据类型，它们的区别？JavaScript共有八种数据类型，分别是 Undefined、Null、Boolean、Number、String、Object、Symbol、BigInt。 其中 Symbol 和 BigInt 是ES6 中新增的数据类型：  Symbol 代表创建后独一无二且不可变的数据类型，它主要是为了解决可能出现的全局变量冲突的问题。 BigInt 是一种数字类型的数据，它可以表示任意精度格式的整数，使用 BigInt 可以安全地存储和操作大整数，即使这个数已经超出了 Number...</div></div></div></a><a class="pagination-related" href="/2025/07/22/Vue%E5%85%AB%E8%82%A1%E6%96%87%E8%87%AA%E6%95%B4%E5%90%88%E9%80%9A%E4%BF%97%E6%98%93%E6%87%82%E7%89%88%E4%B8%8A/" title="Vue八股文自整合通俗易懂版上"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">Next</div><div class="info-item-2">Vue八股文自整合通俗易懂版上</div></div><div class="info-2"><div class="info-item-1">一、Vue 基础1. Vue的基本原理 Vue基本原理  Vue会给数据（data里的内容）加上“监听器”，一旦数据被读取或修改，它能立刻知道。每个组件都有个“观察者”，会盯着用到的数据。当数据变了，“观察者”就会让组件重新渲染，更新页面。  （Vue3用Proxy，比Vue2的Object.defineProperty监听更全面，能直接监听到对象新增&#x2F;删除属性等情况。）  2. 双向数据绑定的原理简单说就是“数据变，页面跟着变；页面改，数据也跟着变”。  先给所有数据加“监听器”（Observer），数据一变就发通知。 解析模板（Compile），把数据显示到页面，同时给输入框等元素绑上事件，页面改动时能更新数据。 用“订阅者”（Watcher）当中间桥梁，数据变了就告诉页面更新，页面改了就告诉数据同步。三者配合，实现双向绑定。  4....</div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/picture/touxiang.jpeg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">李贝贝</div><div class="author-info-description">小草正在长大~</div><div class="site-data"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">11</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://haiyong.site/moyu/"><i class="iconfont icon-youxishoubing"></i><span>摸鱼</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>Announcement</span></div><div class="announcement_content"><b><font color="#e66b6d">我</font> <font color="#e66d98">热</font> <font color="#e66cc6">爱</font> <font color="#cc6de6">我</font> </b> <p align="center">QQ:3151897241</p></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Contents</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD%E3%80%81this-call-apply-bind"><span class="toc-number">1.</span> <span class="toc-text">六、this&#x2F;call&#x2F;apply&#x2F;bind</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%AF%B9this%E5%AF%B9%E8%B1%A1%E7%9A%84%E7%90%86%E8%A7%A3"><span class="toc-number">1.1.</span> <span class="toc-text">1. 对this对象的理解</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-call-%E5%92%8C-apply-%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="toc-number">1.2.</span> <span class="toc-text">2. call() 和 apply() 的区别？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%AE%9E%E7%8E%B0call%E3%80%81apply-%E5%8F%8A-bind-%E5%87%BD%E6%95%B0"><span class="toc-number">1.3.</span> <span class="toc-text">3. 实现call、apply 及 bind 函数</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83%E3%80%81%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B"><span class="toc-number">2.</span> <span class="toc-text">七、异步编程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F%EF%BC%9F"><span class="toc-number">2.1.</span> <span class="toc-text">1. 异步编程的实现方式？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-setTimeout%E3%80%81Promise%E3%80%81Async-Await-%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">2.2.</span> <span class="toc-text">2. setTimeout、Promise、Async&#x2F;Await 的区别</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%AF%B9Promise%E7%9A%84%E7%90%86%E8%A7%A3"><span class="toc-number">2.3.</span> <span class="toc-text">3. 对Promise的理解</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-Promise%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95"><span class="toc-number">2.4.</span> <span class="toc-text">4. Promise的基本用法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-Promise-all%E5%92%8CPromise-race%E7%9A%84%E5%8C%BA%E5%88%AB%E7%9A%84%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">2.5.</span> <span class="toc-text">6. Promise.all和Promise.race的区别的使用场景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-%E5%AF%B9async-await-%E7%9A%84%E7%90%86%E8%A7%A3"><span class="toc-number">2.6.</span> <span class="toc-text">7. 对async&#x2F;await 的理解</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-await-%E5%88%B0%E5%BA%95%E5%9C%A8%E7%AD%89%E5%95%A5%EF%BC%9F"><span class="toc-number">2.7.</span> <span class="toc-text">8. await 到底在等啥？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-async-await%E7%9A%84%E4%BC%98%E5%8A%BF"><span class="toc-number">2.8.</span> <span class="toc-text">9. async&#x2F;await的优势</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#10-async-await%E5%AF%B9%E6%AF%94Promise%E7%9A%84%E4%BC%98%E5%8A%BF"><span class="toc-number">2.9.</span> <span class="toc-text">10. async&#x2F;await对比Promise的优势</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB%E3%80%81%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1"><span class="toc-number">3.</span> <span class="toc-text">八、面向对象</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%AF%B9%E8%B1%A1%E5%88%9B%E5%BB%BA%E7%9A%84%E6%96%B9%E5%BC%8F%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="toc-number">3.1.</span> <span class="toc-text">1. 对象创建的方式有哪些？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%AF%B9%E8%B1%A1%E7%BB%A7%E6%89%BF%E7%9A%84%E6%96%B9%E5%BC%8F%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="toc-number">3.2.</span> <span class="toc-text">2. 对象继承的方式有哪些？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B9%9D%E3%80%81%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E4%B8%8E%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F"><span class="toc-number">4.</span> <span class="toc-text">九、垃圾回收与内存泄漏</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%B5%8F%E8%A7%88%E5%99%A8%E7%9A%84%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6"><span class="toc-number">4.1.</span> <span class="toc-text">1. 浏览器的垃圾回收机制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%93%AA%E4%BA%9B%E6%83%85%E5%86%B5%E4%BC%9A%E5%AF%BC%E8%87%B4%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F"><span class="toc-number">4.2.</span> <span class="toc-text">2. 哪些情况会导致内存泄漏</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Posts</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/07/22/%E3%80%8A%E4%B8%80%E6%96%87%E7%9C%8B%E6%87%82Node.js%E3%80%81nvm%E3%80%81npm%E3%80%81npx%EF%BC%9A%E8%B0%81%E6%98%AF%E5%A4%A7%E5%8E%A8%EF%BC%9F%E8%B0%81%E6%98%AF%E8%B0%83%E5%BA%A6%E5%91%98%EF%BC%9F%E3%80%8B/" title="《一文看懂Node.js、nvm、npm、npx：谁是大厨？谁是调度员？》">《一文看懂Node.js、nvm、npm、npx：谁是大厨？谁是调度员？》</a><time datetime="2025-07-22T12:00:53.219Z" title="Created 2025-07-22 20:00:53">2025-07-22</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/07/22/Vue%E5%85%AB%E8%82%A1%E6%96%87%E8%87%AA%E6%95%B4%E5%90%88%E9%80%9A%E4%BF%97%E6%98%93%E6%87%82%E7%89%88%E4%B8%8B/" title="Vue八股文自整合通俗易懂版下">Vue八股文自整合通俗易懂版下</a><time datetime="2025-07-22T12:00:41.774Z" title="Created 2025-07-22 20:00:41">2025-07-22</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/07/22/Vue%E5%85%AB%E8%82%A1%E6%96%87%E8%87%AA%E6%95%B4%E5%90%88%E9%80%9A%E4%BF%97%E6%98%93%E6%87%82%E7%89%88%E4%B8%8A/" title="Vue八股文自整合通俗易懂版上">Vue八股文自整合通俗易懂版上</a><time datetime="2025-07-22T12:00:26.692Z" title="Created 2025-07-22 20:00:26">2025-07-22</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/07/22/JS%E5%85%AB%E8%82%A1%E6%96%87%E8%87%AA%E6%95%B4%E5%90%88%E9%80%9A%E4%BF%97%E6%98%93%E6%87%82%E7%89%88%E4%B8%8B/" title="JS八股文自整合通俗易懂版下">JS八股文自整合通俗易懂版下</a><time datetime="2025-07-22T12:00:13.444Z" title="Created 2025-07-22 20:00:13">2025-07-22</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/07/22/JS%E5%85%AB%E8%82%A1%E6%96%87%E8%87%AA%E6%95%B4%E5%90%88%E9%80%9A%E4%BF%97%E6%98%93%E6%87%82%E7%89%88%E4%B8%8A/" title="JS八股文自整合通俗易懂版上">JS八股文自整合通俗易懂版上</a><time datetime="2025-07-22T12:00:05.913Z" title="Created 2025-07-22 20:00:05">2025-07-22</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2019 - 2025 By 李贝贝</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.3.5</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Reading Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Toggle Between Light and Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle Between Single-column and Double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="Settings"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back to Top"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"></div><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
